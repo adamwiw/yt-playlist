@@ -37,10 +37,10 @@ class YoutubePlaylist:
             r'"url":"(/watch\?v=[\w-]*)')
         return playlist
 
-    def __loop(self, playlistsSearch: PlaylistsSearch) -> None:
-        page = 0
-        while playlistsSearch.next():
-            page = page + 1
+    def download(self, query: str, pageMax=100) -> None:
+        playlistsSearch = PlaylistsSearch(query)
+        page = 1
+        while page in range(1, pageMax) and playlistsSearch.next():
             results = playlistsSearch.result()['result']
             for resultsPosition, result in enumerate(results):
                 videos = self.__get_playlist(result).videos
@@ -49,6 +49,3 @@ class YoutubePlaylist:
                                         str(resultsPosition + 1),
                                         str(len(results)),
                                         result['title'])
-
-    def download(self, query: str) -> None:
-        self.__loop(PlaylistsSearch(query), self.__template)
