@@ -8,30 +8,28 @@ class YoutubePlaylist:
         self.__youtubeStreamAudio = youtubeStreamAudio
         self.__downloadDir = downloadDir
 
-    def __download(self,
-                   page: int,
+    def __download(self, video, page: str) -> str:
+        audioStream = video.streams.get_by_itag(
+                    self.__youtubeStreamAudio)
+        return audioStream.download(
+            output_path=self.__downloadDir + page)
+
+    def __printAndDownload(self,
                    videos: list,
-                   resultsPosition: int,
-                   resultsLength: int,
-                   playlistPosition: int,
-                   title: str,
-                   template=None) -> None:
-        playlistLength = len(videos)
+                   page: str,
+                   resultsPosition: str,
+                   resultsLength: str,
+                   playlistPosition: str,
+                   title: str) -> None:
+        playlistLength = str(len(videos))
         for video in videos:
             playlistPosition = playlistPosition + 1
+            print((f'page {page}',
+                   f'playlist {resultsPosition}/{resultsLength}',
+                   f'position {playlistPosition}/{playlistLength}',
+                   f'{title}: {video.title}'))
             try:
-                if template:
-                    print(template(str(page),
-                                   str(resultsPosition),
-                                   str(resultsLength),
-                                   str(playlistPosition),
-                                   str(playlistLength),
-                                   title,
-                                   video.title))
-                audioStream = video.streams.get_by_itag(
-                    self.__youtubeStreamAudio)
-                print(audioStream.download(
-                    output_path=self.__downloadDir + str(page)))
+                print(self.__download(video, page))
             except Exception as error:
                 print(error)
 
@@ -41,22 +39,7 @@ class YoutubePlaylist:
             r'"url":"(/watch\?v=[\w-]*)')
         return playlist
 
-    def __template(
-        self,
-        page: str,
-        searchPosition: str,
-        results: str,
-        playlistPosition: str,
-        playlistLength: str,
-        playlistTitle: str,
-        videoTitle: str
-    ) -> set:
-        return (f'page {page}',
-                f'playlist {searchPosition}/{results}',
-                f'position {playlistPosition}/{playlistLength}',
-                f'{playlistTitle}: {videoTitle}')
-
-    def __loop(self, playlistsSearch: PlaylistsSearch, templateFunction=None) -> None:
+    def __loop(self, playlistsSearch: PlaylistsSearch) -> None:
         page = 0
         while playlistsSearch.next():
             resultsPosition = 0
@@ -66,13 +49,12 @@ class YoutubePlaylist:
                 for result in results:
                     playlistPosition = 0
                     videos = self.__get_playlist(result).videos
-                    self.__download(page,
-                                    videos,
-                                    resultsPosition,
-                                    len(results),
-                                    playlistPosition,
-                                    result['title'],
-                                    templateFunction)
+                    self.__printAndDownload(videos,
+                                    str(page),
+                                    str(resultsPosition),
+                                    str(len(results)),
+                                    str(playlistPosition),
+                                    result['title'])
                     resultsPosition = resultsPosition + 1
             except Exception as error:
                 print(error)
