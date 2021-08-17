@@ -13,29 +13,25 @@ def parse_args() -> dict:
                         help='Allowed values: normal, high. Defaults to normal.')
     parser.add_argument('--type', type=str,
                         default='playlists',
-                        help=f'Allowed values: videos, creativeCommons, playlists. Defaults to playlists.')
+                        help=f'Allowed values: videos, creative_commons, playlists. Defaults to playlists.')
     return parser.parse_args()
-
-
-def validate_parameters(youtube_stream_audio: str, search_preferences: str) -> None:
-    if not youtube_stream_audio and search_preferences:
-        print('Invalid parameters. Exiting.')
-        exit()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    stream_audio = getattr(StreamId, args.quality)
-    search_preferences = getattr(ExtendedSearchMode, args.search_type)
-    validate_parameters(stream_audio, search_preferences)
-    youtube_playlist = YoutubePlaylist(stream_audio,
-                                       path.join(args.dir, ''))
-    retries = 0
-    while retries < 5:
-        try:
-            youtube_playlist.download(args.query, search_preferences)
-            retries = 0
-        except Exception as error:
-            print(error, ' Waiting 60s.')
-            retries = retries + 1
-            sleep(60)
+    try:
+        stream_audio = getattr(StreamId, args.quality)
+        search_preferences = getattr(ExtendedSearchMode, args.type)
+        youtube_playlist = YoutubePlaylist(stream_audio,
+                                        path.join(args.dir, ''))
+        retries = 0
+        while retries < 5:
+            try:
+                youtube_playlist.download(args.query, search_preferences)
+                retries = 0
+            except Exception as error:
+                print(error, ' Waiting 60s.')
+                retries = retries + 1
+                sleep(60)
+    except Exception:
+        print('Invalid parameters')
