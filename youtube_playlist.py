@@ -10,16 +10,16 @@ class YoutubePlaylist:
 
     def __download(self, video, page: str) -> str:
         audioStream = video.streams.get_by_itag(
-                    self.__youtubeStreamAudio)
+            self.__youtubeStreamAudio)
         return audioStream.download(
             output_path=self.__downloadDir + page)
 
     def __printAndDownload(self,
-                   videos: list,
-                   page: str,
-                   resultsPosition: str,
-                   resultsLength: str,
-                   title: str) -> None:
+                           videos: list,
+                           page: str,
+                           resultsPosition: str,
+                           resultsLength: str,
+                           title: str) -> None:
         playlistLength = str(len(videos))
         for playlistPosition, video in enumerate(videos):
             print((f'page {page}',
@@ -41,18 +41,14 @@ class YoutubePlaylist:
         page = 0
         while playlistsSearch.next():
             page = page + 1
-            try:
-                results = playlistsSearch.result()['result']
-                for resultsPosition, result in enumerate(results):
-                    videos = self.__get_playlist(result).videos
-                    self.__printAndDownload(videos,
-                                    str(page),
-                                    str(resultsPosition + 1),
-                                    str(len(results)),
-                                    result['title'])
-                    resultsPosition = resultsPosition + 1
-            except Exception as error:
-                print(error)
+            results = playlistsSearch.result()['result']
+            for resultsPosition, result in enumerate(results):
+                videos = self.__get_playlist(result).videos
+                self.__printAndDownload(videos,
+                                        str(page),
+                                        str(resultsPosition + 1),
+                                        str(len(results)),
+                                        result['title'])
 
     def download(self, query: str) -> None:
         self.__loop(PlaylistsSearch(query), self.__template)
