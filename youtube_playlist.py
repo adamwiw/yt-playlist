@@ -16,6 +16,7 @@ class StreamId:
 class YoutubePlaylist:
     def __init__(self, quality: str, downloadDir: str) -> None:
         self.__youtubeStreamAudio = getattr(StreamId, quality)
+        assert self.__youtubeStreamAudio
         self.__downloadDir = downloadDir
 
     def __download(self, video, page: str) -> str:
@@ -52,6 +53,7 @@ class YoutubePlaylist:
 
     def download(self, query: str, searchType: str, pageMax=100) -> None:
         searchPreferences = getattr(ExtendedSearchMode, searchType)
+        assert searchPreferences
         playlistsSearch = CustomSearch(query, searchPreferences)
         page = 1
         while page in range(1, pageMax) and playlistsSearch.next():
