@@ -26,4 +26,3 @@ if __name__ == "__main__":
             print(error, ' Waiting 60s.')
             retries = retries + 1
             sleep(60)
-            continue

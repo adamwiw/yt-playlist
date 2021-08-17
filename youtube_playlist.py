@@ -34,7 +34,6 @@ class YoutubePlaylist:
                     output_path=self.__downloadDir + str(page)))
             except Exception as error:
                 print(error)
-                continue
 
     def __get_playlist(self, result: dict) -> Playlist:
         playlist = Playlist(result['link'])
@@ -64,7 +63,6 @@ class YoutubePlaylist:
                                     printTemplate)
             except Exception as error:
                 print(error)
-                continue
 
     def __lineTemplate(
         self,
