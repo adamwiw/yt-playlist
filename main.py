@@ -19,8 +19,7 @@ if __name__ == "__main__":
     retries = 0
     while retries < 5:
         try:
-            youtubePlaylist.download(
-                youtubePlaylist.search(args.query))
+            youtubePlaylist.download(args.query)
             retries = 0
         except Exception as error:
             print(error, ' Waiting 60s.')

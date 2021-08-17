@@ -41,30 +41,7 @@ class YoutubePlaylist:
             r'"url":"(/watch\?v=[\w-]*)')
         return playlist
 
-    def __loop(self, playlistsSearch: PlaylistsSearch, printTemplate=None) -> None:
-        page = 0
-        while playlistsSearch.next():
-            resultsPosition = 0
-            page = page + 1
-            try:
-                results = playlistsSearch.result()['result']
-                for result in results:
-                    playlist = self.__get_playlist(result)
-                    playlistLength = len(playlist.videos)
-                    resultsPosition = resultsPosition + 1
-                    playlistPosition = 0
-                    self.__download(playlist.videos,
-                                    page,
-                                    resultsPosition,
-                                    results,
-                                    playlistPosition,
-                                    playlistLength,
-                                    result['title'],
-                                    printTemplate)
-            except Exception as error:
-                print(error)
-
-    def __lineTemplate(
+    def __template(
         self,
         page: str,
         searchPosition: str,
@@ -79,8 +56,28 @@ class YoutubePlaylist:
                 f'position {playlistPosition}/{playlistLength}',
                 f'{playlistTitle}: {videoTitle}')
 
-    def search(self, query) -> PlaylistsSearch:
-        return PlaylistsSearch(query)
+    def __loop(self, playlistsSearch: PlaylistsSearch, templateFunction=None) -> None:
+        page = 0
+        while playlistsSearch.next():
+            resultsPosition = 0
+            page = page + 1
+            try:
+                results = playlistsSearch.result()['result']
+                for result in results:
+                    playlistPosition = 0
+                    resultsPosition = resultsPosition + 1
+                    playlist = self.__get_playlist(result)
+                    playlistLength = len(playlist.videos)
+                    self.__download(playlist.videos,
+                                    page,
+                                    resultsPosition,
+                                    results,
+                                    playlistPosition,
+                                    playlistLength,
+                                    result['title'],
+                                    templateFunction)
+            except Exception as error:
+                print(error)
 
-    def download(self, playlistsSearch: PlaylistsSearch) -> None:
-        self.__loop(playlistsSearch, self.__lineTemplate)
+    def download(self, query: str) -> None:
+        self.__loop(PlaylistsSearch(query), self.__template)
