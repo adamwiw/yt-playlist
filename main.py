@@ -10,7 +10,7 @@ if __name__ == "__main__":
     parser.add_argument('query', type=str, help='Playlist search query')
     parser.add_argument('--quality', type=str,
                         default='normal',
-                        help='Allowed values: normal, high. Defaults to normal')
+                        help='Allowed values: normal, high. Defaults to normal.')
     parser.add_argument('--type', type=str,
                         default='playlists',
                         help=f'Allowed values: videos, creativeCommons, playlists. Defaults to playlists.')
