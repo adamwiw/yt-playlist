@@ -16,11 +16,11 @@ class YoutubePlaylist:
 
     def __printAndDownload(self,
                            videos: list,
-                           page: str,
-                           resultsPosition: str,
-                           resultsLength: str,
+                           page: int,
+                           resultsPosition: int,
+                           resultsLength: int,
                            title: str) -> None:
-        playlistLength = str(len(videos))
+        playlistLength = len(videos)
         for playlistPosition, video in enumerate(videos):
             print((f'page {page}',
                    f'playlist {resultsPosition}/{resultsLength}',
@@ -45,7 +45,7 @@ class YoutubePlaylist:
             for resultsPosition, result in enumerate(results):
                 videos = self.__get_playlist(result).videos
                 self.__printAndDownload(videos,
-                                        str(page),
-                                        str(resultsPosition + 1),
-                                        str(len(results)),
+                                        page,
+                                        resultsPosition + 1,
+                                        len(results),
                                         result['title'])
