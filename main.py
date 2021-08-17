@@ -16,7 +16,6 @@ if __name__ == "__main__":
     args = parser.parse_args()
     youtubePlaylist = YoutubePlaylist(str(args.audio),
                                       path.join(args.dir, ''))
-
     retries = 0
     while retries < 5:
         try:
