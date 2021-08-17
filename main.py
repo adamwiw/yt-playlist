@@ -1,7 +1,7 @@
 from argparse import ArgumentParser
 from os import path
 from time import sleep
-from youtube_playlist import YoutubePlaylist, ExtendedSearchMode
+from youtube_playlist import YoutubePlaylist
 
 
 if __name__ == "__main__":
