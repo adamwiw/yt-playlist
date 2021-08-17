@@ -15,11 +15,14 @@ if __name__ == "__main__":
     youtubePlaylist = YoutubePlaylist(
         str(args.audio), args.dir)
 
-    while True:
+    retries = 0
+    while retries < 5:
         try:
             youtubePlaylist.download(
                 youtubePlaylist.search(args.query))
+            retries = 0
         except Exception as error:
             print(error)
+            retries = retries + 1
             sleep(60)
             continue
