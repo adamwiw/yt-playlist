@@ -1,10 +1,10 @@
 from argparse import ArgumentParser
 from os import path
 from time import sleep
-from youtube_playlist import YoutubePlaylist
+from youtube_playlist import *
 
 
-if __name__ == "__main__":
+def parse_args() -> dict:
     parser = ArgumentParser(description='Download from youtube using a query')
     parser.add_argument('dir', type=str, help='Download Directory')
     parser.add_argument('query', type=str, help='Search query')
@@ -14,13 +14,26 @@ if __name__ == "__main__":
     parser.add_argument('--type', type=str,
                         default='playlists',
                         help=f'Allowed values: videos, creativeCommons, playlists. Defaults to playlists.')
-    args = parser.parse_args()
-    youtubePlaylist = YoutubePlaylist(args.quality,
-                                      path.join(args.dir, ''))
+    return parser.parse_args()
+
+
+def validate_parameters(youtube_stream_audio: str, search_preferences: str) -> None:
+    if not youtube_stream_audio and search_preferences:
+        print('Invalid parameters. Exiting.')
+        exit()
+
+
+if __name__ == "__main__":
+    args = parse_args()
+    stream_audio = getattr(StreamId, args.quality)
+    search_preferences = getattr(ExtendedSearchMode, args.search_type)
+    validate_parameters(stream_audio, search_preferences)
+    youtube_playlist = YoutubePlaylist(stream_audio,
+                                       path.join(args.dir, ''))
     retries = 0
     while retries < 5:
         try:
-            youtubePlaylist.download(args.query, args.search_type)
+            youtube_playlist.download(args.query, search_preferences)
             retries = 0
         except Exception as error:
             print(error, ' Waiting 60s.')
