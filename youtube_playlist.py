@@ -9,21 +9,21 @@ class YoutubePlaylist:
         self.__downloadDir = downloadDir
 
     def __download(self,
-                   videos: list,
                    page: int,
+                   videos: list,
                    resultsPosition: int,
-                   results: list,
+                   resultsLength: int,
                    playlistPosition: int,
-                   playlistLength: int,
                    title: str,
                    template=None) -> None:
+        playlistLength = len(videos)
         for video in videos:
             playlistPosition = playlistPosition + 1
             try:
                 if template:
                     print(template(str(page),
                                    str(resultsPosition),
-                                   str(len(results)),
+                                   str(resultsLength),
                                    str(playlistPosition),
                                    str(playlistLength),
                                    title,
@@ -65,17 +65,15 @@ class YoutubePlaylist:
                 results = playlistsSearch.result()['result']
                 for result in results:
                     playlistPosition = 0
-                    resultsPosition = resultsPosition + 1
-                    playlist = self.__get_playlist(result)
-                    playlistLength = len(playlist.videos)
-                    self.__download(playlist.videos,
-                                    page,
+                    videos = self.__get_playlist(result).videos
+                    self.__download(page,
+                                    videos,
                                     resultsPosition,
-                                    results,
+                                    len(results),
                                     playlistPosition,
-                                    playlistLength,
                                     result['title'],
                                     templateFunction)
+                    resultsPosition = resultsPosition + 1
             except Exception as error:
                 print(error)
 
