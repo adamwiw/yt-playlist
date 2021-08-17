@@ -35,7 +35,7 @@ class YoutubePlaylist:
     def __get_playlist(self, result: dict) -> Playlist:
         playlist = Playlist(result['link'])
         playlist._video_regex = re.compile(
-            r'"url":"(/watch\?v=[\w-]*)"')
+            r'"url":"(/watch\?v=[\w-]*)')
         return playlist
 
     def __loop(self, playlistsSearch: PlaylistsSearch, printTemplate=None) -> None:
