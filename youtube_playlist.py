@@ -1,6 +1,6 @@
 import re
 from pytube import Playlist
-from youtubesearchpython import PlaylistsSearch
+from youtubesearchpython import CustomSearch
 
 
 class YoutubePlaylist:
@@ -37,8 +37,8 @@ class YoutubePlaylist:
             r'"url":"(/watch\?v=[\w-]*)')
         return playlist
 
-    def download(self, query: str, pageMax=100) -> None:
-        playlistsSearch = PlaylistsSearch(query)
+    def download(self, query: str, searchPreferences: str, pageMax=100) -> None:
+        playlistsSearch = CustomSearch(query, searchPreferences)
         page = 1
         while page in range(1, pageMax) and playlistsSearch.next():
             results = playlistsSearch.result()['result']
