@@ -19,11 +19,9 @@ class YoutubePlaylist:
                    page: str,
                    resultsPosition: str,
                    resultsLength: str,
-                   playlistPosition: str,
                    title: str) -> None:
         playlistLength = str(len(videos))
-        for video in videos:
-            playlistPosition = playlistPosition + 1
+        for playlistPosition, video in enumerate(videos):
             print((f'page {page}',
                    f'playlist {resultsPosition}/{resultsLength}',
                    f'position {playlistPosition}/{playlistLength}',
@@ -42,18 +40,15 @@ class YoutubePlaylist:
     def __loop(self, playlistsSearch: PlaylistsSearch) -> None:
         page = 0
         while playlistsSearch.next():
-            resultsPosition = 0
             page = page + 1
             try:
                 results = playlistsSearch.result()['result']
-                for result in results:
-                    playlistPosition = 0
+                for resultsPosition, result in enumerate(results):
                     videos = self.__get_playlist(result).videos
                     self.__printAndDownload(videos,
                                     str(page),
-                                    str(resultsPosition),
+                                    str(resultsPosition + 1),
                                     str(len(results)),
-                                    str(playlistPosition),
                                     result['title'])
                     resultsPosition = resultsPosition + 1
             except Exception as error:
