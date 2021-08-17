@@ -5,9 +5,9 @@ from youtube_playlist import YoutubePlaylist
 
 
 if __name__ == "__main__":
-    parser = ArgumentParser(description='Download playlists using a query')
+    parser = ArgumentParser(description='Download from youtube using a query')
     parser.add_argument('dir', type=str, help='Download Directory')
-    parser.add_argument('query', type=str, help='Playlist search query')
+    parser.add_argument('query', type=str, help='Search query')
     parser.add_argument('--quality', type=str,
                         default='normal',
                         help='Allowed values: normal, high. Defaults to normal.')
