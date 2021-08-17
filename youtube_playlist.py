@@ -4,9 +4,18 @@ from youtubesearchpython import CustomSearch
 from youtubesearchpython.internal.constants import SearchMode
 
 
+class ExtendedSearchMode(SearchMode):
+    creativeCommons = 'EgQQATAB'
+
+
+class StreamId:
+    normal = 140
+    high = 141
+
+
 class YoutubePlaylist:
-    def __init__(self, youtubeStreamAudio: str, downloadDir: str) -> None:
-        self.__youtubeStreamAudio = youtubeStreamAudio
+    def __init__(self, quality: str, downloadDir: str) -> None:
+        self.__youtubeStreamAudio = getattr(StreamId, quality)
         self.__downloadDir = downloadDir
 
     def __download(self, video, page: str) -> str:
@@ -33,15 +42,16 @@ class YoutubePlaylist:
                 print(error)
 
     def __get_videos(self, link: str, searchPreferences: str) -> list:
-        if searchPreferences == SearchMode.playlists:
+        if searchPreferences == ExtendedSearchMode.playlists:
             playlist = Playlist(link)
             playlist._video_regex = re.compile(
                 r'"url":"(/watch\?v=[\w-]*)')
             return playlist.videos
-        if searchPreferences in [SearchMode.videos, 'EgQQATAB']:
+        if searchPreferences in [ExtendedSearchMode.videos, ExtendedSearchMode.creativeCommons]:
             return [YouTube(link)]
 
-    def download(self, query: str, searchPreferences: str, pageMax=100) -> None:
+    def download(self, query: str, searchType: str, pageMax=100) -> None:
+        searchPreferences = getattr(ExtendedSearchMode, searchType)
         playlistsSearch = CustomSearch(query, searchPreferences)
         page = 1
         while page in range(1, pageMax) and playlistsSearch.next():
