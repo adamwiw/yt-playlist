@@ -16,21 +16,25 @@ class YoutubePlaylist:
                    playlistPosition: int,
                    playlistLength: int,
                    title: str,
-                   printTemplate=None) -> None:
+                   template=None) -> None:
         for video in videos:
-            if printTemplate:
-                print(printTemplate(str(page),
-                                    str(resultsPosition),
-                                    str(len(results)),
-                                    str(playlistPosition),
-                                    str(playlistLength),
-                                    title,
-                                    video.title))
-            audioStream = video.streams.get_by_itag(
-                self.__youtubeStreamAudio)
-            print(audioStream.download(
-                output_path=self.__downloadDir + str(page)))
             playlistPosition = playlistPosition + 1
+            try:
+                if template:
+                    print(template(str(page),
+                                   str(resultsPosition),
+                                   str(len(results)),
+                                   str(playlistPosition),
+                                   str(playlistLength),
+                                   title,
+                                   video.title))
+                audioStream = video.streams.get_by_itag(
+                    self.__youtubeStreamAudio)
+                print(audioStream.download(
+                    output_path=self.__downloadDir + str(page)))
+            except Exception as error:
+                print(error)
+                continue
 
     def __get_playlist(self, result: dict) -> Playlist:
         playlist = Playlist(result['link'])
@@ -43,20 +47,24 @@ class YoutubePlaylist:
         while playlistsSearch.next():
             resultsPosition = 0
             page = page + 1
-            results = playlistsSearch.result()['result']
-            for result in results:
-                playlist = self.__get_playlist(result)
-                playlistLength = len(playlist.videos)
-                resultsPosition = resultsPosition + 1
-                playlistPosition = 0
-                self.__download(playlist.videos,
-                                page,
-                                resultsPosition,
-                                results,
-                                playlistPosition,
-                                playlistLength,
-                                result['title'],
-                                printTemplate)
+            try:
+                results = playlistsSearch.result()['result']
+                for result in results:
+                    playlist = self.__get_playlist(result)
+                    playlistLength = len(playlist.videos)
+                    resultsPosition = resultsPosition + 1
+                    playlistPosition = 0
+                    self.__download(playlist.videos,
+                                    page,
+                                    resultsPosition,
+                                    results,
+                                    playlistPosition,
+                                    playlistLength,
+                                    result['title'],
+                                    printTemplate)
+            except Exception as error:
+                print(error)
+                continue
 
     def __lineTemplate(
         self,

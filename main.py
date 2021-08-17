@@ -1,4 +1,5 @@
 from argparse import ArgumentParser
+from os import path
 from time import sleep
 from youtube_playlist import YoutubePlaylist
 
@@ -10,10 +11,11 @@ if __name__ == "__main__":
     parser.add_argument('dir', type=str, help='Download Directory')
     parser.add_argument('query', type=str, help='Playlist search query')
     parser.add_argument('--audio', type=int,
-                        default=DEFAULT_YOUTUBE_STREAM_AUDIO, help='Youtube stream audio ID')
+                        default=DEFAULT_YOUTUBE_STREAM_AUDIO, 
+                        help='Youtube stream audio ID')
     args = parser.parse_args()
     youtubePlaylist = YoutubePlaylist(
-        str(args.audio), args.dir)
+        str(args.audio), path.join(args.dir, ''))
 
     retries = 0
     while retries < 5:
@@ -22,7 +24,7 @@ if __name__ == "__main__":
                 youtubePlaylist.search(args.query))
             retries = 0
         except Exception as error:
-            print(error)
+            print(error, ' Waiting 60s.')
             retries = retries + 1
             sleep(60)
             continue
