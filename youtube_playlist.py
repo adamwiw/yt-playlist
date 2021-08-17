@@ -10,7 +10,6 @@ class ExtendedSearchMode(SearchMode):
 
 class StreamId:
     normal = '140'
-    high = '141'
 
 
 class YoutubePlaylist:
@@ -37,7 +36,7 @@ class YoutubePlaylist:
                    f'position {playlist_position}/{playlist_length}' if playlist_length > 1 else '',
                    f'{title}: {video.title}' if video.title != title else title))
             try:
-                print(self.__download(video, page))
+                print(self.__download(video, str(page)))
             except Exception as error:
                 print(error)
 
