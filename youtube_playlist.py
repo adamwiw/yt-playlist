@@ -5,63 +5,60 @@ from youtubesearchpython.internal.constants import SearchMode
 
 
 class ExtendedSearchMode(SearchMode):
-    creativeCommons = 'EgQQATAB'
+    creative_commons = 'EgQQATAB'
 
 
 class StreamId:
-    normal = 140
-    high = 141
+    normal = '140'
+    high = '141'
 
 
 class YoutubePlaylist:
-    def __init__(self, quality: str, downloadDir: str) -> None:
-        self.__youtubeStreamAudio = getattr(StreamId, quality)
-        assert self.__youtubeStreamAudio
-        self.__downloadDir = downloadDir
+    def __init__(self, stream_audio: str, download_dir: str) -> None:
+        self.__stream_audio = stream_audio
+        self.__download_dir = download_dir
 
     def __download(self, video, page: str) -> str:
-        audioStream = video.streams.get_by_itag(
-            self.__youtubeStreamAudio)
-        return audioStream.download(
-            output_path=self.__downloadDir + page)
+        audio_stream = video.streams.get_by_itag(
+            self.__stream_audio)
+        return audio_stream.download(
+            output_path=self.__download_dir + page)
 
-    def __loopPlaylist(self,
+    def __loop_playlist(self,
                        videos: list,
                        page: int,
-                       resultsPosition: int,
-                       resultsLength: int,
+                       results_position: int,
+                       results_length: int,
                        title: str) -> None:
-        playlistLength = len(videos)
-        for playlistPosition, video in enumerate(videos):
+        playlist_length = len(videos)
+        for playlist_position, video in enumerate(videos):
             print((f'page {page}',
-                   f'result {resultsPosition}/{resultsLength}',
-                   f'position {playlistPosition}/{playlistLength}' if playlistLength > 1 else '',
+                   f'result {results_position}/{results_length}',
+                   f'position {playlist_position}/{playlist_length}' if playlist_length > 1 else '',
                    f'{title}: {video.title}' if video.title != title else title))
             try:
                 print(self.__download(video, page))
             except Exception as error:
                 print(error)
 
-    def __get_videos(self, link: str, searchPreferences: str) -> list:
-        if searchPreferences == ExtendedSearchMode.playlists:
+    def __get_videos(self, link: str, search_preferences: str) -> list:
+        if search_preferences == ExtendedSearchMode.playlists:
             playlist = Playlist(link)
             playlist._video_regex = re.compile(
                 r'"url":"(/watch\?v=[\w-]*)')
             return playlist.videos
-        if searchPreferences in [ExtendedSearchMode.videos, ExtendedSearchMode.creativeCommons]:
+        if search_preferences in [ExtendedSearchMode.videos, ExtendedSearchMode.creative_commons]:
             return [YouTube(link)]
 
-    def download(self, query: str, searchType: str, pageMax=100) -> None:
-        searchPreferences = getattr(ExtendedSearchMode, searchType)
-        assert searchPreferences
-        playlistsSearch = CustomSearch(query, searchPreferences)
+    def download(self, query: str, search_preferences: str, page_max=100) -> None:
+        playlists_search = CustomSearch(query, search_preferences)
         page = 1
-        while page in range(1, pageMax) and playlistsSearch.next():
-            results = playlistsSearch.result()['result']
-            for resultsPosition, result in enumerate(results):
-                videos = self.__get_videos(result['link'], searchPreferences)
-                self.__loopPlaylist(videos,
+        while page in range(1, page_max) and playlists_search.next():
+            results = playlists_search.result()['result']
+            for results_position, result in enumerate(results):
+                videos = self.__get_videos(result['link'], search_preferences)
+                self.__loop_playlist(videos,
                                     page,
-                                    resultsPosition + 1,
+                                    results_position + 1,
                                     len(results),
                                     result['title'])
