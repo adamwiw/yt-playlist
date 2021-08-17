@@ -51,8 +51,9 @@ class YoutubePlaylist:
 
     def download(self, query: str, search_preferences: str, page_max=100) -> None:
         playlists_search = CustomSearch(query, search_preferences)
-        page = 1
-        while page in range(1, page_max) and playlists_search.next():
+        page = 0
+        while playlists_search.next():
+            page = page + 1
             results = playlists_search.result()['result']
             for results_position, result in enumerate(results):
                 videos = self.__get_videos(result['link'], search_preferences)
